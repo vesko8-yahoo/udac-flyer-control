@@ -63,14 +63,15 @@ If successful, the quads should be going to their destination points and trackin
  - implement the code in the function `YawControl()`
  - tune parameters `kpYaw` and the 3rd (z) component of `kpPQR`
 
-Next I implemented `AltitudeControl()` see lines 225 till 245. This takes in verticle postition and velocity and commanded posistion and velocity and also the commaned vertical acceleration and the vehicle's attitude and also a dt and computes the commanded thrust. This is a PD-Controller With Feedforward. 
+I implemented `AltitudeControl()` see lines 225 till 245. This takes in verticle postition and velocity and commanded posistion and velocity and also the commaned vertical acceleration and the vehicle's attitude and also a dt and computes the commanded thrust. This is a PD-Controller With Feedforward. 
 
+I implemented `LateralPositionControl()`. For the x and y directions we are given position, velocity, and the corresponding commanded position, velocity and also the commaned acceleration. We use those to computed the commaned accelarations in the x and y directions. This is essentially a PID-Controller With Feed Forward. 
+
+I also implemented YawControl - see lines 313 till 333. This is essentially a P-Controller. You have to account for the fact here there the bounds are between -pi and pi.
 
 <p align="center">
 <img src="animations/scenario3.gif" width="500"/>
 </p>
-
-**Hint:**  For a second order system, such as the one for this quadcopter, the velocity gain (`kpVelXY` and `kpVelZ`) should be at least ~3-4 times greater than the respective position gain (`kpPosXY` and `kpPosZ`).
 
 ### Non-idealities and robustness (scenario 4) ###
 
@@ -85,39 +86,10 @@ In this part, we will explore some of the non-idealities and robustness of a con
 
 3. Tune the integral control, and other control parameters until all the quads successfully move properly.  Your drones' motion should look like this:
 
+I implemented `AltitudeControl()` see lines 225 till 245. This takes in verticle postition and velocity and commanded posistion and velocity and also the commaned vertical acceleration and the vehicle's attitude and also a dt and computes the commanded thrust. We are using dt parameter now and that makes this controller and Integral Controller. 
+
+Also, I had to play with the Kp parameters used  by the above contorllers namely `kpPosXY`, `kpPosZ`, `kiPosZ`, `kpVelXY`, `kpVelZ`, and `kpYaw`. These are what I settled on: `kpPosXY=2.5`, `kpPosZ=8`, `kiPosZ=10`, `kpVelXY=15`, `kpVelZ=18`,  and `kpYaw=2.3`.
+
 <p align="center">
 <img src="animations/scenario4.gif" width="500"/>
 </p>
-
-
-### Tracking trajectories ###
-
-Now that we have all the working parts of a controller, you will put it all together and test it's performance once again on a trajectory.  For this simulation, you will use `Scenario 5`.  This scenario has two quadcopters:
- - the orange one is following `traj/FigureEight.txt`
- - the other one is following `traj/FigureEightFF.txt` - for now this is the same trajectory.  For those interested in seeing how you might be able to improve the performance of your drone by adjusting how the trajectory is defined, check out **Extra Challenge 1** below!
-
-How well is your drone able to follow the trajectory?  It is able to hold to the path fairly well?
-
-
-### Extra Challenge 1 (Optional) ###
-
-You will notice that initially these two trajectories are the same. Let's work on improving some performance of the trajectory itself.
-
-1. Inspect the python script `traj/MakePeriodicTrajectory.py`.  Can you figure out a way to generate a trajectory that has velocity (not just position) information?
-
-2. Generate a new `FigureEightFF.txt` that has velocity terms
-Did the velocity-specified trajectory make a difference? Why?
-
-With the two different trajectories, your drones' motions should look like this:
-
-<p align="center">
-<img src="animations/scenario5.gif" width="500"/>
-</p>
-
-
-### Extra Challenge 2 (Optional) ###
-
-For flying a trajectory, is there a way to provide even more information for even better tracking?
-
-How about trying to fly this trajectory as quickly as possible (but within following threshold)!
-
